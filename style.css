@@ -1,0 +1,41 @@
+body {
+  background-color: #e1f1ff;
+}
+.title {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 5rem;
+  font-weight: bold;
+  color: #c25454;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.piano {
+  display: flex;
+  margin: 0 30%;
+  padding: 15px;
+  border-top: 5px solid #555;
+}
+.button {
+  width: 60px;
+  height: 300px;
+  background-color: #f5f5f5;
+  border: 1px solid #999;
+  border-radius: 5px;
+}
+.freqs {
+  display: flex;
+  margin: 30px 30%;
+  padding: 0 15px;
+}
+.freq-name {
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  color: #c25454;
+  font-weight: bold;
+  border: 1px solid transparent;
+}
+.pressed {
+  background-color: darksalmon;
+}
