@@ -39,3 +39,9 @@ body {
 .pressed {
   background-color: darksalmon;
 }
+.record {
+  text-align: center;
+}
+.record-btn, .play-btn {
+  margin: 15px;
+}
