@@ -13,51 +13,58 @@ let activeButtons = [];
 let musicSheets = [];
 let recording = false;
 let start;
-console.log('start', Date.now());
 
 function onButtonPress(e) {
   if (!validButtons.includes(e.code) || activeButtons.includes(e.code)) { return; }
-  activeButtons.push(e.code);
-  console.log('ping', activeButtons);
-  document.querySelector(`#${e.code}`).classList.add('pressed');
+  activeButtons = [...activeButtons, e.code];
+
   if (recording) {
+    musicSheets[musicSheets.length-1].time = Date.now() - start;
     musicSheets.push({
-      name: activeButtons,
-      time: Date.now() - start
+      name: activeButtons
     });
     start = Date.now();
   }
+  document.querySelector(`#${e.code}`).classList.add('pressed');
 }
 
 function onButtonUp(e) {
   if (!validButtons.includes(e.code)) { return; }
   activeButtons = activeButtons.filter(btn => btn !== e.code);
 
-
   // gui ki hieu tat nut (low) tuong ung toi ESP8266
   // ... vidu: 'lKeyA', 'lKeyS', ...
   document.querySelector(`#${e.code}`).classList.remove('pressed');
   if (recording) {
-    musicSheets.push({
-      name: activeButtons,
-      time: Date.now() - start
-    });
+    musicSheets[musicSheets.length-1].time = Date.now() - start;
+    if (!activeButtons.length) {
+      musicSheets.push({
+        name: 'silent'
+      })
+    }
+    else {
+      musicSheets.push({
+        name: activeButtons
+      });
+    }
     start = Date.now();
   }
 }
 
 function changeRecordStatus() {
-  start = Date.now();
-
   recording = !recording;
   if (recording) {
-    musicSheets = []; // khoi tao lai ban ghi am
+    start = Date.now();
+    musicSheets = [{name: 'silent'}];
     document.querySelector('#record-btn').textContent = 'Dừng ghi âm...';
     let playBtn = document.querySelector('.play-btn');
-    document.querySelector('#record').removeChild(playBtn);
+    if (playBtn) {
+      document.querySelector('#record').removeChild(playBtn);
+    }
   }
   else {
-    console.log('musicsheet', musicSheets);
+    musicSheets[musicSheets.length-1].time = Date.now() - start;
+    console.log('sheets', musicSheets);
     document.querySelector('#record-btn').textContent = 'Ghi âm';
     let playButton = document.createElement('button');
     let text = document.createTextNode('Phát lại bản ghi');
@@ -66,8 +73,6 @@ function changeRecordStatus() {
     playButton.setAttribute('onclick', 'playRecord()');
     document.querySelector('#record').appendChild(playButton);
   }
-
-  console.log('record', recording);
 }
 
 function playRecord() {
