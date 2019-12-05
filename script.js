@@ -12,6 +12,8 @@ const validButtons = [
 let activeButtons = [];
 let musicSheets = [];
 let recording = false;
+let start;
+console.log('start', Date.now());
 
 function onButtonPress(e) {
   if (!validButtons.includes(e.code) || activeButtons.includes(e.code)) { return; }
@@ -19,23 +21,34 @@ function onButtonPress(e) {
   console.log('ping', activeButtons);
   document.querySelector(`#${e.code}`).classList.add('pressed');
   if (recording) {
-    musicSheets.push(e.code);
+    musicSheets.push({
+      name: activeButtons,
+      time: Date.now() - start
+    });
+    start = Date.now();
   }
 }
 
 function onButtonUp(e) {
   if (!validButtons.includes(e.code)) { return; }
-  activeButtons = activeButtons.filter(btn => btn != e.code);
+  activeButtons = activeButtons.filter(btn => btn !== e.code);
+
+
   // gui ki hieu tat nut (low) tuong ung toi ESP8266
   // ... vidu: 'lKeyA', 'lKeyS', ...
-  console.log('low', `l${e.code}`);
   document.querySelector(`#${e.code}`).classList.remove('pressed');
   if (recording) {
-    musicSheets.push(`l${e.code}`); // push in the stop point to music sheet
+    musicSheets.push({
+      name: activeButtons,
+      time: Date.now() - start
+    });
+    start = Date.now();
   }
 }
 
 function changeRecordStatus() {
+  start = Date.now();
+
   recording = !recording;
   if (recording) {
     musicSheets = []; // khoi tao lai ban ghi am
@@ -44,6 +57,7 @@ function changeRecordStatus() {
     document.querySelector('#record').removeChild(playBtn);
   }
   else {
+    console.log('musicsheet', musicSheets);
     document.querySelector('#record-btn').textContent = 'Ghi âm';
     let playButton = document.createElement('button');
     let text = document.createTextNode('Phát lại bản ghi');
